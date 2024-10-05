@@ -5,22 +5,24 @@ from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.gaia import Gaia
 
+Gaia.ROW_LIMIT = -1
+
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # Query Gaia for stars around a given RA/DEC
 coord = SkyCoord(ra=185.1787793, dec=17.7932516, unit=(u.degree, u.degree), frame='icrs')
-width = u.Quantity(0.1, u.deg)
-height = u.Quantity(0.1, u.deg)
+width = u.Quantity(1.9, u.deg)
+height = u.Quantity(1.9, u.deg)
 r = Gaia.query_object_async(coordinate=coord, width=width, height=height)
-
+r.pprint()
 # Extract RA, DEC, and parallax from the results
 ra = np.array(r['ra'])  # in degrees
 dec = np.array(r['dec'])  # in degrees
-parallax = np.array(r['parallax'])  # in milliarcseconds (mas)
+# parallax = np.array(r['parallax'])  # in milliarcseconds (mas)
 
 # Convert parallax to distance in parsecs (1 parsec = 1000 / parallax in mas)
-distance = 1000 / parallax  # distance in parsecs
-
+# distance = 1000 / parallax  # distance in parsecs
+distance = 93.1846
 # Convert RA and DEC from degrees to radians
 ra_rad = np.radians(ra)
 dec_rad = np.radians(dec)
