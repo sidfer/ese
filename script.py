@@ -26,13 +26,15 @@ r = Gaia.query_object_async(coordinate=coord, width=width, height=height)
 r.pprint()
 
 # Extract RA, DEC, and parallax from the results
+parallax = np.array(r['parallax'])  # in milliarcseconds (mas)
+valid_parallax = parallax > 0
 ra = np.array(r['ra'])  # in degrees
 dec = np.array(r['dec'])  # in degrees
-# parallax = np.array(r['parallax'])  # in milliarcseconds (mas)
+parallax = parallax[valid_parallax]
 
 # Convert parallax to distance in parsecs (1 parsec = 1000 / parallax in mas)
 # distance = 1000 / parallax  # distance in parsecs
-distance = 13.7967
+distance = 1000 / parallax
 # Convert RA and DEC from degrees to radians
 ra_rad = np.radians(ra)
 dec_rad = np.radians(dec)
