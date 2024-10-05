@@ -4,68 +4,10 @@ import matplotlib.pyplot as plt
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.gaia import Gaia
+import argparse
 
-Gaia.ROW_LIMIT = 250
-
-ra_exo = np.radians(164.8647611)
-dec_exo = np.radians(40.4304931)
-distance_exo = 13.7967 
-
-x_exo = distance_exo * np.cos(dec_exo) * np.cos(ra_exo)
-y_exo = distance_exo * np.cos(dec_exo) * np.sin(ra_exo)
-z_exo = distance_exo * np.sin(dec_exo)
-
-
-ssl._create_default_https_context = ssl._create_unverified_context
-
-# Query Gaia for stars around a given RA/DEC
-coord = SkyCoord(ra_exo, dec_exo, unit=(u.degree, u.degree), frame='icrs')
-width = u.Quantity(5, u.deg)
-height = u.Quantity(5, u.deg)
-r = Gaia.query_object_async(coordinate=coord, width=width, height=height)
-r.pprint()
-
-# Extract RA, DEC, and parallax from the results
-ra = np.array(r['ra'])  # in degrees
-dec = np.array(r['dec'])  # in degrees
-# parallax = np.array(r['parallax'])  # in milliarcseconds (mas)
-
-# Convert parallax to distance in parsecs (1 parsec = 1000 / parallax in mas)
-# distance = 1000 / parallax  # distance in parsecs
-distance = 13.7967
-# Convert RA and DEC from degrees to radians
-ra_rad = np.radians(ra)
-dec_rad = np.radians(dec)
-
-# Convert RA/DEC/Distance to Cartesian coordinates (x, y, z)
-x = distance * np.cos(dec_rad) * np.cos(ra_rad)
-y = distance * np.cos(dec_rad) * np.sin(ra_rad)
-z = distance * np.sin(dec_rad)
-
-x_relative = x - x_exo
-y_relative = y - y_exo
-z_relative = z - z_exo
-
-
-# Plot the point cloud
-fig = plt.figure(figsize=(10, 10))
-ax = fig.add_subplot(111, projection='3d')
-ax.scatter(x_relative, y_relative, z_relative, s=1) 
-
-ax.set_xlabel('X [parsecs]')
-ax.set_ylabel('Y [parsecs]')
-ax.set_zlabel('Z [parsecs]')
-plt.show()
-
-
-''''
-import numpy as np
-import ssl
-import matplotlib.pyplot as plt
-from astropy.coordinates import SkyCoord
-import astropy.units as u
-from astroquery.gaia import Gaia
-import argparse  # Import argparse
+# Increase row limit to retrieve more stars
+Gaia.ROW_LIMIT = 5000  # Adjust this to the maximum number of stars you'd like to retrieve
 
 # Set up argument parsing
 parser = argparse.ArgumentParser(description="Query stars around an exoplanet.")
@@ -76,51 +18,44 @@ parser.add_argument("distance_exo", type=float, help="Distance to the exoplanet 
 args = parser.parse_args()
 
 # Use the parsed arguments to set values
-ra_exo = np.radians(args.ra_exo)  # Convert to radians
-dec_exo = np.radians(args.dec_exo)  # Convert to radians
-distance_exo = args.distance_exo
+ra_exo = args.ra_exo  # Convert to radians
+dec_exo = args.dec_exo  # Convert to radians
 
-# Calculate coordinates
-x_exo = distance_exo * np.cos(dec_exo) * np.cos(ra_exo)
-y_exo = distance_exo * np.cos(dec_exo) * np.sin(ra_exo)
-z_exo = distance_exo * np.sin(dec_exo)
-
+# Allow unverified SSL connections
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # Query Gaia for stars around a given RA/DEC
 coord = SkyCoord(ra_exo, dec_exo, unit=(u.degree, u.degree), frame='icrs')
-width = u.Quantity(5, u.deg)
-height = u.Quantity(5, u.deg)
+
+# Increase the width and height of the search area
+width = u.Quantity(5, u.deg)  # Increase search width
+height = u.Quantity(5, u.deg)  # Increase search height
+
+# Perform the query
 r = Gaia.query_object_async(coordinate=coord, width=width, height=height)
-r.pprint()
 
 # Extract RA, DEC, and parallax from the results
 ra = np.array(r['ra'])  # in degrees
 dec = np.array(r['dec'])  # in degrees
-distance = 13.7967
+parallax = np.array(r['parallax'])  # in milliarcseconds (mas)
 
-# Convert RA and DEC from degrees to radians
-ra_rad = np.radians(ra)
-dec_rad = np.radians(dec)
+# Convert parallax to distance in parsecs (1 parsec = 1000 / parallax in mas)
+distance = np.where(parallax > 0, 1000 / parallax, np.inf)  # distance in parsecs
 
-# Convert RA/DEC/Distance to Cartesian coordinates (x, y, z)
-x = distance * np.cos(dec_rad) * np.cos(ra_rad)
-y = distance * np.cos(dec_rad) * np.sin(ra_rad)
-z = distance * np.sin(dec_rad)
+# Brightness scaling: dim stars have larger distances, thus should be smaller on the plot
+sizes = 1000 / distance  # Scale sizes for visibility
 
-x_relative = x - x_exo
-y_relative = y - y_exo
-z_relative = z - z_exo
+# Create the 2D scatter plot
+plt.figure(figsize=(10, 10), facecolor='black')  # Black background for night sky
+plt.scatter(ra, dec, s=sizes, c='white', alpha=0.5, edgecolor='none')  # Stars in white
 
-# Plot the point cloud
-fig = plt.figure(figsize=(10, 10))
-ax = fig.add_subplot(111, projection='3d')
-ax.scatter(x_relative, y_relative, z_relative, s=1)
+# Add labels and title
+plt.xlabel('Right Ascension [degrees]', color='white')
+plt.ylabel('Declination [degrees]', color='white')
+plt.title('Night Sky Representation of Stars Around Exoplanet', color='white')
+plt.grid(False)  # Turn off grid
+plt.gca().set_facecolor('black')  # Ensure the axes background is black
 
-ax.set_xlabel('X [parsecs]')
-ax.set_ylabel('Y [parsecs]')
-ax.set_zlabel('Z [parsecs]')
+# Show the plot
+plt.savefig('night_sky_stars_more.png', dpi=300, bbox_inches='tight')  # Save as PNG file with high resolution
 plt.show()
-
-
-'''
