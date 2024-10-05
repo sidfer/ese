@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exoplanet Search</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+      }
+      input[type="text"] {
+        padding: 10px;
+        width: 300px;
+        font-size: 16px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin: 10px;
+      }
+      #planetList {
+        margin-top: 20px;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        display: inline-block;
+        text-align: left;
+      }
+      .planet-item {
+        cursor: pointer;
+        padding: 5px;
+      }
+      .planet-item:hover {
+        background-color: #f0f0f0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Search for Exoplanet</h1>
+    <input type="text" id="planetName" placeholder="Enter planet name" />
+    <button onclick="searchPlanet()">Search</button>
+    <button onclick="fetchAllPlanets()">Show All Planets</button>
+
+    <div id="result"></div>
+    <div id="planetList"></div>
+
+    <script>
+      async function searchPlanet() {
+        const planetName = document.getElementById("planetName").value;
+        console.log("Searching for planet:", planetName);
+        const apiUrl = `https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT * FROM pscomppars WHERE pl_name='${planetName}'&format=json`;
+
+        try {
+          const response = await fetch(apiUrl);
+
+          if (!response.ok) {
+            throw new Error(
+              `HTTP error! Status: ${response.status} - ${response.statusText}`
+            );
+          }
+
+          const data = await response.json();
+
+          if (data.length === 0) {
+            document.getElementById("result").innerHTML = "No planet found!";
+          } else {
+            // document.getElementById(
+            //   "result"
+            // ).innerHTML = `Planet: ${data[0].pl_name}, Host Star: ${data[0].hostname}, Orbital Period: ${data[0].pl_orbper} days`;
+            document.getElementById("result").innerHTML = "found it";
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          document.getElementById("result").innerHTML =
+            "An error occurred: " + error.message;
+        }
+      }
+
+      async function fetchAllPlanets() {
+        const apiUrl = `https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT pl_name FROM pscomppars&format=json`;
+
+        try {
+          const response = await fetch(apiUrl);
+
+          // Check if the response is OK
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          if (data.length === 0) {
+            document.getElementById("planetList").innerHTML =
+              "No planets found!";
+          } else {
+            const listContainer = document.getElementById("planetList");
+            listContainer.innerHTML = ""; // Clear previous results
+
+            data.forEach((planet) => {
+              const planetItem = document.createElement("div");
+              planetItem.textContent = planet.pl_name;
+              planetItem.className = "planet-item";
+              planetItem.onclick = () => selectPlanet(planet.pl_name);
+              listContainer.appendChild(planetItem);
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching planet names:", error);
+          document.getElementById("planetList").innerHTML =
+            "An error occurred: " + error.message;
+        }
+      }
+    </script>
+  </body>
+</html>
