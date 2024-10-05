@@ -1,4 +1,5 @@
 import numpy as np
+import ssl
 import matplotlib.pyplot as plt
 from astropy.coordinates import SkyCoord
 import astropy.units as u
@@ -14,6 +15,8 @@ x_exo = distance_exo * np.cos(dec_exo) * np.cos(ra_exo)
 y_exo = distance_exo * np.cos(dec_exo) * np.sin(ra_exo)
 z_exo = distance_exo * np.sin(dec_exo)
 
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 # Query Gaia for stars around a given RA/DEC
 coord = SkyCoord(ra_exo, dec_exo, unit=(u.degree, u.degree), frame='icrs')
