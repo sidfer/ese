@@ -1,5 +1,3 @@
-const { spawn } = require("child_process"); // Use CommonJS syntax
-
 function selectPlanet(planetName) {
 	document.getElementById("planetName").value = planetName;
 	//select the search button
@@ -33,9 +31,25 @@ async function searchPlanet() {
 			).innerHTML = `Planet: ${data[0].pl_name}, RA: ${data[0].ra}, Dec: ${data[0].dec}, Distance: ${data[0].sy_dist}`;
 		}
 
-		// call the pythonscript
-		const pythonProcess = spawn("python3", ["script.py"]);
-		console.log(pythonProcess);
+		const scriptRunUrl = `http://localhost:3000/api/run-script`; // Ensure this is declared
+		const scriptResponse = await fetch(scriptRunUrl, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				ra_exo: data[0].ra, // Assuming `data[0]` has `ra` and `dec` properties
+				dec_exo: data[0].dec, // Similarly for `dec`
+				distance_exo: data[0].sy_dist, // Update this according to your data structure
+			}),
+		});
+
+		if (!scriptResponse.ok) {
+			throw new Error(
+				`Failed to run Python script: ${scriptResponse.status}`
+			);
+		}
+		const scriptOutput = await scriptResponse.text();
 	} catch (error) {
 		console.error("Error fetching data:", error);
 		document.getElementById("result").innerHTML =
