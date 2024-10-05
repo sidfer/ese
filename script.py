@@ -1,8 +1,11 @@
 import numpy as np
+import ssl
 import matplotlib.pyplot as plt
 from astropy.coordinates import SkyCoord
 import astropy.units as u
 from astroquery.gaia import Gaia
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 # Query Gaia for stars around a given RA/DEC
 coord = SkyCoord(ra=185.1787793, dec=17.7932516, unit=(u.degree, u.degree), frame='icrs')
