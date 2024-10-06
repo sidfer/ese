@@ -127,7 +127,8 @@ async function searchPlanet(planetName) {
             document.getElementById("result").innerHTML = "No planet found!";
         } else {
             const planet = data[0];
-            openSkySimulation(planet.ra, planet.dec);
+            // edit here
+            openSkySimulation(planet.ra, planet.dec, planetName);
         }
 
         const scriptRunUrl = `http://localhost:3000/api/run-script`;
@@ -191,7 +192,9 @@ async function fetchAllPlanets() {
     }
 }
 
-function openSkySimulation(ra, dec) {
-    const url = `/3d-simulation?ra=${encodeURIComponent(ra)}&dec=${encodeURIComponent(dec)}`;
+function openSkySimulation(ra, dec, planetName) {
+    // edit here
+    const url = `/3d-simulation?ra=${encodeURIComponent(ra)}&dec=${encodeURIComponent(dec)}
+        &name=${encodeURIComponent(planetName)}`;
     window.open(url, '_blank');
 }
