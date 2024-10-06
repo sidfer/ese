@@ -57,8 +57,14 @@
         function init(starData) {
             console.log('Initializing 3D scene');
             scene = new THREE.Scene();
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000); // Set clear color to black
+            document.body.appendChild(renderer.domElement);
+
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-            camera.position.set(0, 0, 1500); // Move camera back further
+            camera.position.set(0, 0, 50); // Move camera back further
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.05;
@@ -70,10 +76,7 @@
             camera.position.set(0, 0, 500); // Move camera back further
             controls.target.set(0, 0, 0); // Set control target to center of scene
 
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setClearColor(0x000000); // Set clear color to black
-            document.body.appendChild(renderer.domElement);
+      
 
             if (typeof THREE.OrbitControls !== 'function') {
                 console.error('THREE.OrbitControls is not a constructor. Type:', typeof THREE.OrbitControls);
