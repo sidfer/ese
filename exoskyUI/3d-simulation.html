@@ -41,11 +41,12 @@
         }
 
         async function loadDependencies() {
+            console.log('loadDependencies called');
             try {
                 await loadScript('https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js');
                 await loadScript('https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js');
                 console.log('Three.js and OrbitControls loaded successfully');
-                loadStarData();
+                await loadStarData();
             } catch (error) {
                 console.error('Error loading scripts:', error);
                 showError('Failed to load required libraries. Please try refreshing the page.');
@@ -55,7 +56,7 @@
         let scene, camera, renderer, stars, controls;
 
         function init(starData) {
-            console.log('Initializing 3D scene');
+            console.log('init called with', starData.length, 'stars');            
             scene = new THREE.Scene();
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -223,6 +224,7 @@
         }
 
         async function loadStarData() {
+            console.log('loadStarData called');
             const urlParams = new URLSearchParams(window.location.search);
             const ra = urlParams.get('ra');
             const dec = urlParams.get('dec');
@@ -248,7 +250,8 @@
                 showError(`Error loading star data: ${error.message}`);
             }
         }
-        loadStarData();
+        // loadStarData();
+        console.log('Starting initialization');
         loadDependencies();
     </script>
 </body>
