@@ -29,6 +29,9 @@
 <body>
     <div id="error-message"></div>
     <div id="debug-info"></div>
+    <div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); color: white; display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 9999;">
+        Loading simulation...
+    </div>
     <div id="hoverDisplay" style="position: absolute; top: 50px; left: 10px; color: white; background-color: rgba(0,0,0,0.7); padding: 5px; display: none;"></div>
     <script>
 
@@ -113,7 +116,7 @@
 
             addStars(starData);
             animate();
-
+w
             window.addEventListener('resize', onWindowResize, false);
             window.addEventListener('mousemove', onMouseMove, false); // Add mouse move listener
         }
@@ -282,6 +285,9 @@
             // edit here
             planetName = urlParams.get('name'); // Store the planet name for later use
             console.log("Selected planet name:", planetName);
+
+            document.getElementById('loading-screen').style.display = 'none';
+
             try {
                 console.log('Fetching star data for RA:', ra, 'DEC:', dec);
                 const response = await fetch(`/api/star-data?ra=${ra}&dec=${dec}`);

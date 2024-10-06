@@ -107,6 +107,10 @@ window.onload = async function() {
     init(); // Initialize Three.js
     await fetchAllPlanets(); // Fetch all exoplanets
     document.getElementById("dropdownButton").onclick = toggleDropdown; // Toggle dropdown on button click
+
+    // Add event listener for search input
+    const searchInput = document.getElementById("dropdownButton");
+    searchInput.addEventListener("input", filterPlanets);
 };
 
 async function searchPlanet(planetName) {
@@ -190,6 +194,25 @@ async function fetchAllPlanets() {
         const planetOptions = document.getElementById("planetOptions");
         planetOptions.innerHTML = "<li class='text-gray-500'>Error fetching data!</li>";
     }
+}
+
+function filterPlanets() {
+    const filter = document.getElementById("dropdownButton").value.toLowerCase();
+    const planetOptions = document.getElementById("planetOptions");
+    
+    // Show or hide the loading message
+    const loadingMessage = document.querySelector(".loading-message");
+    loadingMessage.style.display = filter ? "none" : "block"; // Show loading when searching
+
+    const options = planetOptions.getElementsByTagName("li");
+    for (let i = 0; i < options.length; i++) {
+        const option = options[i];
+        const planetName = option.textContent.toLowerCase();
+        option.style.display = planetName.includes(filter) ? "" : "none";
+    }
+
+    // Hide loading message once done
+    loadingMessage.style.display = "none";
 }
 
 function openSkySimulation(ra, dec, planetName) {
