@@ -171,7 +171,6 @@ async function fetchAllPlanets() {
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
-
         const planetOptions = document.getElementById("planetOptions");
         planetOptions.innerHTML = '';
 
@@ -220,4 +219,8 @@ function openSkySimulation(ra, dec, planetName) {
     const url = `/3d-simulation?ra=${encodeURIComponent(ra)}&dec=${encodeURIComponent(dec)}
         &name=${encodeURIComponent(planetName)}`;
     window.open(url, '_blank');
+
+    setTimeout(() => {
+        document.getElementById('loading-screen').style.display = 'none';
+    }, 3000); // Hide after 3 seconds if not already hidden
 }

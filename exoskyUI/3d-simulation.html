@@ -35,7 +35,6 @@
     <div id="hoverDisplay" style="position: absolute; top: 50px; left: 10px; color: white; background-color: rgba(0,0,0,0.7); padding: 5px; display: none;"></div>
     <script>
 
-        
         function loadScript(url) {
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
@@ -116,11 +115,10 @@
 
             addStars(starData);
             animate();
-w
             window.addEventListener('resize', onWindowResize, false);
             window.addEventListener('mousemove', onMouseMove, false); // Add mouse move listener
         }
-        
+
         function onMouseMove(event) {
             // Calculate mouse position in normalized device coordinates
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -285,7 +283,7 @@ w
             // edit here
             planetName = urlParams.get('name'); // Store the planet name for later use
             console.log("Selected planet name:", planetName);
-
+            // hide the loading screen once the star data has loaded
             document.getElementById('loading-screen').style.display = 'none';
 
             try {
