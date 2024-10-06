@@ -9,23 +9,22 @@ app.use(cors()); // Enable CORS
 app.use(express.json());
 
 app.post("/api/run-script", async (req, res) => {
-  const { ra_exo, dec_exo, distance_exo } = req.body;
+  const { ra_exo, dec_exo } = req.body;
 
   // Ensure the parameters are provided
   if (
     ra_exo === undefined ||
-    dec_exo === undefined ||
-    distance_exo === undefined
+    dec_exo === undefined
   ) {
     return res
       .status(400)
       .send(
-        "Missing parameters: ra_exo, dec_exo, and distance_exo are required."
+        "Missing parameters: ra_exo, dec_exo are required."
       );
   }
 
   // Build the command with arguments
-  const command = `python3 script.py ${ra_exo} ${dec_exo} ${distance_exo}`;
+  const command = `python3 script.py ${ra_exo} ${dec_exo}`;
 
   exec(command, (error, stdout, stderr) => {
     if (error) {
@@ -41,23 +40,22 @@ app.post("/api/run-script", async (req, res) => {
   });
 });
 app.post("/api/run-script", async (req, res) => {
-  const { ra_exo, dec_exo, distance_exo } = req.body;
+  const { ra_exo, dec_exo } = req.body;
 
   // Ensure the parameters are provided
   if (
     ra_exo === undefined ||
-    dec_exo === undefined ||
-    distance_exo === undefined
+    dec_exo === undefined
   ) {
     return res
       .status(400)
       .send(
-        "Missing parameters: ra_exo, dec_exo, and distance_exo are required."
+        "Missing parameters: ra_exo, dec_exo are required."
       );
   }
 
   // Build the command with arguments
-  const command = `python script.py ${ra_exo} ${dec_exo} ${distance_exo}`;
+  const command = `python script.py ${ra_exo} ${dec_exo}`;
 
   exec(command, (error, stdout, stderr) => {
     if (error) {

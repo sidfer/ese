@@ -1,89 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Exoplanet Search</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <style>
-      /* Optional: For smooth dropdown transitions */
-      .dropdown {
-        transition: all 0.3s ease-in-out;
-      }
-      #starMap {
-        width: 100%;
-        height: 100vh;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: -1; /* Behind other content */
-      }
+        /* Optional: For smooth dropdown transitions */
+        .dropdown {
+            transition: all 0.3s ease-in-out;
+        }
+
+        #starMap {
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1; /* Behind other content */
+        }
+
+        /* Hide loading message initially */
+        .loading-message {
+            display: none;
+        }
     </style>
-  </head>
-  <body class="overflow-hidden">
-    <!-- Background Video -->
+</head>
+<body class="overflow-hidden">
     <section class="relative w-full h-screen overflow-hidden">
-      <video
-        id="background-video"
-        class="absolute top-0 left-0 w-full h-full object-cover"
-        autoplay
-        loop
-        muted
-      >
-        <source src="./Background.mp4" type="video/mp4" />
-      </video>
+        <div class="relative z-10 flex flex-col items-center justify-center h-full text-white bg-black bg-opacity-50">
+            <div class="flex mb-4">
+                <!-- Custom Dropdown -->
+                <div class="relative w-96">
+                    <button id="dropdownButton" class="p-4 rounded-lg bg-transparent border border-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full text-left">
+                        Select an exo-planet
+                    </button>
+                    <div id="dropdownMenu" class="absolute left-0 right-0 z-10 mt-1 bg-black border border-gray-300 rounded-lg hidden max-h-60 overflow-y-auto">
+                        <ul id="planetOptions" class="divide-y divide-gray-700">
+                            <!-- Options will be populated with JavaScript -->
+                        </ul>
+                    </div>
+                </div>
+                <div class="loading-message px-4 py-2 text-sm text-gray-500">
+                    Loading more exoplanets...
+                </div>
+            </div>
 
-      <div
-        class="relative z-10 flex flex-col items-center justify-center h-full text-white bg-black bg-opacity-50"
-      >
-        <div class="flex mb-4">
-          <input
-            type="text"
-            id="planetName"
-            placeholder="Enter an exo-planet name"
-            class="p-4 rounded-lg bg-transparent border-0 text-white focus:outline-none focus:ring-2 w-96 border-b-2"
-          />
-
-          <button
-            id="searchButton"
-            onclick="searchPlanet()"
-            class="text-white p-2 rounded-r-lg hover:bg-gray-600 transition duration-200"
-          >
-            Search
-          </button>
+            <div id="result"></div>
         </div>
 
-        <div id="result"></div>
-
-        <button
-          id="showAllPlanetsButton"
-          onclick="fetchAllPlanets()"
-          class="bg-gray-500 text-white p-2 rounded-lg hover:bg-black transition duration-200"
-        >
-          Show All Planets
-        </button>
-
-        <!-- Updated Dropdown Structure -->
-        <div id="planetList" class="mt-2 hidden relative">
-          <div
-            class="absolute left-1/2 transform -translate-x-1/2 mt-2 bg-white rounded-lg shadow-lg p-4 w-64 max-h-48 overflow-y-auto"
-          >
-            <ul id="planetOptions" class="list-disc list-inside text-gray-500">
-              <!-- Populate with JavaScript -->
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <canvas id="starMap"></canvas>
-      <!-- Canvas for Three.js star map -->
-
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-      <script src="script.js"></script>
-      <!-- Link to the external JS file -->
+        <!-- Canvas for Three.js star map -->
+        <canvas id="starMap"></canvas>
     </section>
-  </body>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="script.js"></script>
+</body>
 </html>
