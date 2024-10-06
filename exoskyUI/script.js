@@ -92,7 +92,10 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-window.onload = init;
+function openSkySimulation(ra, dec) {
+  const url = `/3d-simulation?ra=${encodeURIComponent(ra)}&dec=${encodeURIComponent(dec)}`;
+  window.open(url, '_blank');
+}
 
 // Existing Functions
 function selectPlanet(planetName) {
@@ -104,8 +107,7 @@ function selectPlanet(planetName) {
 async function searchPlanet() {
     const planetName = document.getElementById("planetName").value;
     console.log("Searching for planet:", planetName);
-    const apiUrl = `http://localhost:3000/api/exoplanets?name=${planetName}`;
-
+    const apiUrl = `/api/exoplanets?name=${encodeURIComponent(planetName)}`;
     try {
         const response = await fetch(apiUrl);
 
@@ -118,6 +120,9 @@ async function searchPlanet() {
 
         if (data.length === 0) {
             document.getElementById("result").innerHTML = "No planet found!";
+        } else {
+            const planet = data[0];
+            openSkySimulation(planet.ra, planet.dec);
         }
 
         const scriptRunUrl = `http://localhost:3000/api/run-script`;
