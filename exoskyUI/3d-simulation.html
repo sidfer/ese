@@ -103,9 +103,9 @@
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(ambientLight);
 
-            // Add coordinate axes for debugging
-            const axesHelper = new THREE.AxesHelper(100);
-            scene.add(axesHelper);
+            // // Add coordinate axes for debugging
+            // const axesHelper = new THREE.AxesHelper(100);
+            // scene.add(axesHelper);
 
             // Add a bright sphere at the center for reference
             const sphereGeometry = new THREE.SphereGeometry(2, 32, 32);
@@ -223,8 +223,8 @@
 
     // Add debug spheres
     const debugSpheres = [
-        { position: new THREE.Vector3(scaleFactor/2, scaleFactor/2, scaleFactor/2), color: 0xff0000 },
-        { position: new THREE.Vector3(-scaleFactor/2, -scaleFactor/2, -scaleFactor/2), color: 0x00ff00 },
+        // { position: new THREE.Vector3(scaleFactor/2, scaleFactor/2, scaleFactor/2), color: 0xff0000 },
+        // { position: new THREE.Vector3(-scaleFactor/2, -scaleFactor/2, -scaleFactor/2), color: 0x00ff00 },
         { position: new THREE.Vector3(0, 0, 0), color: 0x0000ff }
     ];
 
@@ -240,11 +240,7 @@
         function updateDebugInfo(starCount, minX, maxX, minY, maxY, minZ, maxZ) {
             const debugElement = document.getElementById('debug-info');
             debugElement.innerHTML = `
-                Stars: ${starCount}<br>
-                X: ${minX.toFixed(2)} to ${maxX.toFixed(2)}<br>
-                Y: ${minY.toFixed(2)} to ${maxY.toFixed(2)}<br>
-                Z: ${minZ.toFixed(2)} to ${maxZ.toFixed(2)}<br>
-                Camera Z: ${camera.position.z.toFixed(2)}
+                Planet: ${planetName}
             `;
         }
 
