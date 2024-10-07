@@ -58,6 +58,9 @@
     <div id="debug-info"></div>
     <div id="hoverDisplay" style="position: absolute; top: 50px; left: 10px; color: white; background-color: rgba(0,0,0,0.7); padding: 5px; display: none;"></div>
     <script>
+        let isZoomedIn = false;
+        let initialZoom = 500;
+        let fullZoom = 50;
         let textureLoader;
         let planetTexture;
 
@@ -105,10 +108,11 @@
             document.body.appendChild(renderer.domElement);
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-            camera.position.set(0, 0, 50); // Move camera back further
+            camera.position.set(0, 0, initialZoom); // Move camera back further
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.05;
+            controls.enableZoom = false;
             controls.screenSpacePanning = false;
             controls.minDistance = 100;
             controls.maxDistance = 3000;
@@ -138,10 +142,10 @@
 
             // Load a planet texture
             const textures = [
-                '4k_makemake_fictional.jpg', 
-                '4k_ceres_fictional.jpg',
-                '4k_haumea_fictional.jpg',
-                '4k_eris_fictional.jpg'
+                '2k_makemake_fictional.jpg', 
+                '2k_ceres_fictional.jpg',
+                '2k_haumea_fictional.jpg',
+                '2k_eris_fictional.jpg'
             ];
             function getRandomTexture() {
                 // Pick a random texture from the array
@@ -180,6 +184,36 @@
             animate();
             window.addEventListener('resize', onWindowResize, false);
             window.addEventListener('mousemove', onMouseMove, false); // Add mouse move listener
+                  // Event listeners for resize and click
+            window.addEventListener('resize', onWindowResize, false);
+            window.addEventListener('mousemove', onMouseMove, false);
+            window.addEventListener('click', onClick, false);  // Add click listener for planet
+   
+        }
+
+        function onClick(event) {
+            // Update the mouse position in normalized device coordinates
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            // Cast a ray from the camera to the scene
+            raycaster.setFromCamera(mouse, camera);
+
+            // Check if the planet (centerSphere) is clicked
+            const intersects = raycaster.intersectObject(centerSphere);
+            if (intersects.length > 0) {
+                toggleZoom();
+            }
+        }
+        
+        function toggleZoom() {
+            // Toggle between initial zoom and full zoom
+            if (isZoomedIn) {
+                camera.position.set(0, 0, initialZoom);  // Reset to initial zoom
+            } else {
+                camera.position.set(0, 0, fullZoom);  // Zoom in fully
+            }
+            isZoomedIn = !isZoomedIn;  // Toggle the zoom state
         }
 
         // Create a separate function to create the planet
