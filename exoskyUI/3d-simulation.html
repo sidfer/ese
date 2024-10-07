@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exoplanet Sky Simulation</title>
@@ -59,8 +60,10 @@
     <div id="hoverDisplay" style="position: absolute; top: 50px; left: 10px; color: white; background-color: rgba(0,0,0,0.7); padding: 5px; display: none;"></div>
     <script>
         let isZoomedIn = false;
-        let initialZoom = 500;
-        let fullZoom = 50;
+        // let initialZoom = 500;
+        // let fullZoom = 50;
+        const zoomInLevel = 50;
+        const zoomOutLevel = 400;
         let textureLoader;
         let planetTexture;
 
@@ -108,17 +111,18 @@
             document.body.appendChild(renderer.domElement);
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-            camera.position.set(0, 0, initialZoom); // Move camera back further
+            camera.position.set(0, 0, zoomOutLevel); // Move camera back further
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.05;
-            controls.enableZoom = false;
+            controls.enableZoom = true;
             controls.screenSpacePanning = false;
-            controls.minDistance = 100;
-            controls.maxDistance = 3000;
-            camera.position.z = 200;
+            controls.enablePan = false;
+            controls.minDistance = zoomInLevel;
+            controls.maxDistance = zoomOutLevel;
+            // camera.position.z = 200;
 
-            camera.position.set(0, 0, 500); // Move camera back further
+            camera.position.set(0, 0, zoomOutLevel); 
             controls.target.set(0, 0, 0); // Set control target to center of scene
 
       
@@ -129,9 +133,9 @@
                 return;
             }
 
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
+            // controls = new THREE.OrbitControls(camera, renderer.domElement);
+            // controls.enableDamping = true;
+            // controls.dampingFactor = 0.05;
 
             // Add an ambient light
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -202,23 +206,20 @@
             // Check if the planet (centerSphere) is clicked
             const intersects = raycaster.intersectObject(centerSphere);
             if (intersects.length > 0) {
-                toggleZoom();
+                // Toggle zoom state with smooth animation using GSAP
+                if (isZoomedIn) {
+                    gsap.to(camera.position, { z: zoomOutLevel, duration: 1, ease: "power2.inOut" });
+                } else {
+                    gsap.to(camera.position, { z: zoomInLevel, duration: 1, ease: "power2.inOut" });
+                }
+                isZoomedIn = !isZoomedIn;  // Toggle the zoom state
             }
         }
         
-        function toggleZoom() {
-            // Toggle between initial zoom and full zoom
-            if (isZoomedIn) {
-                camera.position.set(0, 0, initialZoom);  // Reset to initial zoom
-            } else {
-                camera.position.set(0, 0, fullZoom);  // Zoom in fully
-            }
-            isZoomedIn = !isZoomedIn;  // Toggle the zoom state
-        }
 
         // Create a separate function to create the planet
         function createPlanet() {
-            const sphereGeometry = new THREE.SphereGeometry(15, 64, 64);
+            const sphereGeometry = new THREE.SphereGeometry(15, 512, 512);
             const sphereMaterial = new THREE.MeshStandardMaterial({ 
                 map: planetTexture,
                 roughness: 0.5,
@@ -254,8 +255,12 @@
             // Calculate objects intersecting the picking ray
             const intersects = raycaster.intersectObjects([largeSphere]);
             if (intersects.length > 0) {
+                document.body.style.cursor = 'pointer';
+                centerSphere.material.emissive = new THREE.Color(0xaaaaaa);
                 showPlanetName();
             } else {
+                document.body.style.cursor = 'default';
+                centerSphere.material.emissive = new THREE.Color(0x000000);
                 hidePlanetName();
             }
         }
@@ -370,9 +375,8 @@
 
         function animate() {
             requestAnimationFrame(animate);
-            if (centerSphere) {
-            // centerSphere.rotation.y += 0.00001; // Adjust rotation speed as needed
-        }
+            // Clamp the camera position.z to always be within the zoom levels
+            // camera.position.z = Math.max(zoomInLevel, Math.min(zoomOutLevel, camera.position.z));
             controls.update();
             renderer.render(scene, camera);
         }
