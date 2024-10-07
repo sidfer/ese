@@ -48,7 +48,7 @@ function addStars() {
         sizeAttenuation: true,
         map: starTexture,
         transparent: true,
-        opacity: 0.9,
+        opacity: 1,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
     });

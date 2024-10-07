@@ -324,9 +324,13 @@
     starGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     starGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
+
+    const starTexture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/spark1.png');
+
     const starMaterial = new THREE.PointsMaterial({
         size: 2,
         vertexColors: true,
+        map: starTexture,
         sizeAttenuation: true,
         transparent: true,
         opacity: 1,
