@@ -72,8 +72,12 @@
             scene = new THREE.Scene();
             raycaster = new THREE.Raycaster(); // Create a raycaster
             renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setClearColor(0x000000); // Set clear color to black
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.gammaFactor = 2.2;
+
             document.body.appendChild(renderer.domElement);
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
@@ -108,9 +112,24 @@
                 // Initialize the texture loader
             textureLoader = new THREE.TextureLoader();
 
-            // Load a planet texture (replace with your desired texture URL)
-            planetTexture = textureLoader.load('2k_eris_fictional.jpg', 
+            // Load a planet texture
+            const textures = [
+                '4k_makemake_fictional.jpg', 
+                '4k_ceres_fictional.jpg',
+                '4k_haumea_fictional.jpg',
+                '4k_eris_fictional.jpg'
+            ];
+            function getRandomTexture() {
+                // Pick a random texture from the array
+                const randomIndex = Math.floor(Math.random() * textures.length);
+                return textures[randomIndex];
+            }
+
+            planetTexture = textureLoader.load(getRandomTexture(), 
                 function(texture) {
+                    texture.minFilter = THREE.LinearMipMapLinearFilter;
+                    texture.magFilter = THREE.LinearFilter;
+                    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
                     // Texture loaded successfully
                     console.log('Planet texture loaded');
                     createPlanet();
@@ -121,14 +140,16 @@
                 }
             );
 
+            planetTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            planetTexture.encoding = THREE.sRGBEncoding;
             // // Add coordinate axes for debugging
             // const axesHelper = new THREE.AxesHelper(100);
             // scene.add(axesHelper);
 
-            // Add a bright sphere at the center for reference
-            const sphereGeometry = new THREE.SphereGeometry(2, 32, 32);
-            const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-            centerSphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            // // Add a bright sphere at the center for reference
+            // const sphereGeometry = new THREE.SphereGeometry(5, 128, 128);
+            // const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+            // centerSphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
             // scene.add(centerSphere);
             createPlanet();
             addStars(starData);
@@ -139,19 +160,20 @@
 
         // Create a separate function to create the planet
         function createPlanet() {
-            const sphereGeometry = new THREE.SphereGeometry(5, 32, 32);
-            const sphereMaterial = new THREE.MeshPhongMaterial({ 
+            const sphereGeometry = new THREE.SphereGeometry(15, 64, 64);
+            const sphereMaterial = new THREE.MeshStandardMaterial({ 
                 map: planetTexture,
+                roughness: 0.5,
                 bumpMap: planetTexture,
-                bumpScale: 0.05,
+                bumpScale: 0.05
             });
             centerSphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
             scene.add(centerSphere);
 
-            // Add a point light to illuminate the planet
-            const pointLight = new THREE.PointLight(0xffffff, 1);
-            pointLight.position.set(50, 50, 50);
-            scene.add(pointLight);
+            // // Add a point light to illuminate the planet
+            // const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+            // pointLight.position.set(10, 10, 10);
+            // scene.add(pointLight);
         }
 
         function onMouseMove(event) {
@@ -291,7 +313,7 @@
         function animate() {
             requestAnimationFrame(animate);
             if (centerSphere) {
-            centerSphere.rotation.y += 0.001; // Adjust rotation speed as needed
+            // centerSphere.rotation.y += 0.00001; // Adjust rotation speed as needed
         }
             controls.update();
             renderer.render(scene, camera);
